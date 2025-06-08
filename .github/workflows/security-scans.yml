@@ -41,9 +41,11 @@ jobs:
       with:
         args: >
           -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-          -Dsonar.projectKey=vscode-openai
+          -Dsonar.projectKey=${{ github.repository_owner }}_vscode-openai
           -Dsonar.sources=src
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+          -Dsonar.projectName=vscode-openai
+          -Dsonar.host.url=https://sonarcloud.io
 
     # Upload SonarCloud Results
     - name: Upload SonarCloud Results
