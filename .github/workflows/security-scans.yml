@@ -40,14 +40,19 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-          -Dsonar.projectKey=${{ github.repository_owner }}_vscode-openai
-          -Dsonar.sources=src
+          -Dsonar.organization=tejsinghani-mohit
+          -Dsonar.projectKey=tejsinghani-mohit_vscode-openai
+          -Dsonar.sources=.
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
           -Dsonar.projectName=vscode-openai
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.alm.enabled=false
           -Dsonar.analysis.autoconfig=false
+          -Dsonar.sourceEncoding=UTF-8
+          -Dsonar.exclusions=**/*.test.ts,**/node_modules/**,**/dist/**
+          -Dsonar.typescript.file.suffixes=.ts,.tsx
+          -Dsonar.tests=src/**/*.test.ts
+          -Dsonar.test.inclusions=**/*.test.ts
 
     # Upload SonarCloud Results
     - name: Upload SonarCloud Results
