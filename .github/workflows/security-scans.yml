@@ -1,0 +1,72 @@
+name: Security Scans
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sundays
+
+jobs:
+  security-scans:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    # GitLeaks Scan
+    - name: GitLeaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Upload GitLeaks Results
+    - name: Upload GitLeaks Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: gitleaks-results
+        path: results/
+        retention-days: 7
+
+    # SonarQube Scan
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+      with:
+        args: >
+          -Dsonar.projectKey=vscode-openai
+          -Dsonar.sources=src
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+    # Upload SonarQube Results
+    - name: Upload SonarQube Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: sonarqube-results
+        path: .scannerwork/
+        retention-days: 7
+
+    # Trivy File System Scan
+    - name: Run Trivy filesystem scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    # Upload Trivy Results
+    - name: Upload Trivy Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: trivy-results
+        path: trivy-results.sarif
+        retention-days: 7
