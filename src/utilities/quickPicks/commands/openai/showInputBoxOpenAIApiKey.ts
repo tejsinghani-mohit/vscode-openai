@@ -14,7 +14,7 @@ export async function showInputBoxOpenAIApiKey(
     ignoreFocusOut: true,
     value: typeof state.authApiKey === 'string' ? state.authApiKey : '',
     prompt: `$(key)  Enter the openai.com Api-Key`,
-    placeholder: 'sk-8i6055nAY3eAwARfHFjiT5BlbkFJAEFUvG5GwtAV2RiwP87h',
+    placeholder: '<your_open_api_key>',
     validate: validateApiKey,
     shouldResume: shouldResume,
   });
