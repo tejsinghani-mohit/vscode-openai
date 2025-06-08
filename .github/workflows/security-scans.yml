@@ -48,8 +48,23 @@ jobs:
           -Dsonar.sources=src
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-          -Dsonar.reportType=text
-          -Dsonar.report.export.path=sonar-report.txt
+
+    # Generate SonarCloud Text Report
+    - name: Generate SonarCloud Report
+      if: always()
+      run: |
+        echo "SonarCloud Analysis Results" > sonar-report.txt
+        echo "--------------------------------" >> sonar-report.txt
+        if [ -d ".scannerwork" ]; then
+          find .scannerwork -type f -name "*.txt" -o -name "*.json" | while read file; do
+            echo "Contents of $file:" >> sonar-report.txt
+            echo "-------------------" >> sonar-report.txt
+            cat "$file" >> sonar-report.txt
+            echo -e "\n\n" >> sonar-report.txt
+          done
+        else
+          echo "No .scannerwork directory found" >> sonar-report.txt
+        fi
 
     # Upload SonarCloud Results
     - name: Upload SonarCloud Results
@@ -57,7 +72,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: sonarcloud-scan-results
-        path: sonar-report.txt
+        path: |
+          .scannerwork/
+          sonar-report.txt
         retention-days: 7
 
     # Trivy File System Scan
