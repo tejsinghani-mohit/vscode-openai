@@ -46,6 +46,8 @@ jobs:
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
           -Dsonar.projectName=vscode-openai
           -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.alm.enabled=false
+          -Dsonar.analysis.autoconfig=false
 
     # Upload SonarCloud Results
     - name: Upload SonarCloud Results
